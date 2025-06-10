@@ -1,0 +1,26 @@
+
+
+while True:
+    # Screenshot intero
+    screenshot = pyautogui.screenshot()
+    frame = np.array(screenshot)
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+    # Rilevamento oggetti
+    results = model(frame)
+
+    # Filtra i risultati (es. persona)
+    for *box, conf, cls in results.xyxy[0]:
+        label = model.names[int(cls)]
+        if label == 'person' and conf > 0.6:
+            x1, y1, x2, y2 = map(int, box)
+            cx = (x1 + x2) // 2cy = (y1 + y2) // 2
+
+            # Muovi mirino verso il centro del bersaglio
+            screen_w, screen_h = pyautogui.size()
+            dx = cx - screen_w // 2
+            dy = cy - screen_h // 2
+            pyautogui.moveRel(dx / 20, dy / 20, duration=0.01)
+
+    time.sleep(0.05)
+```
